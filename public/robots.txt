@@ -1,0 +1,18 @@
+# robots.txt pour OperisCloud
+
+User-agent: *
+Allow: /
+Disallow: /dashboard
+Disallow: /settings
+Disallow: /inventory
+Disallow: /sales
+Disallow: /crm
+Disallow: /finance
+Disallow: /analytics
+Disallow: /giftcards
+Disallow: /api/
+Disallow: /onboarding
+Disallow: /pricing
+
+# Sitemap
+Sitemap: https://operiscloud.com/sitemap.xml

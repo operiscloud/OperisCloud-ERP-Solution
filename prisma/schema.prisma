@@ -1,0 +1,533 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ==========================================
+// TENANT & USER MANAGEMENT
+// ==========================================
+
+model Tenant {
+  id        String @id @default(cuid())
+  name      String
+  subdomain String @unique
+
+  // Subscription & Plan
+  plan                 Plan    @default(FREE)
+  stripeCustomerId     String?
+  stripeSubscriptionId String?
+
+  // Settings
+  logo         String?
+  primaryColor String  @default("#3b82f6")
+  currency     String  @default("CHF")
+  language     String  @default("fr")
+  timezone     String  @default("Europe/Zurich")
+
+  // Invoice/Company Settings
+  companyAddress     String?
+  companyCity        String?
+  companyPostalCode  String?
+  companyCountry     String? @default("Suisse")
+  companyPhone       String?
+  companyEmail       String?
+  companyWebsite     String?
+  taxNumber          String? // VAT/TVA number
+  registrationNumber String? // Company registration number
+  invoiceFooter      String? // Custom footer text for invoices
+
+  // Bank Information
+  bankName          String?
+  bankIBAN          String?
+  bankBIC           String? // SWIFT/BIC code
+  bankAccountHolder String?
+
+  // PDF Template Configuration
+  pdfTemplateConfig Json? // { primaryColor, secondaryColor, headerStyle, fontStyle, showLogo }
+
+  // Industry Configuration
+  industryId       String
+  industrySettings Json? // Custom fields, categories, etc.
+
+  // Variant Configuration
+  variantConfig Json? // Variant options like Size, Color, etc.
+
+  // Modules enabled
+  enabledModules String[] @default(["inventory", "sales", "finance", "giftcards", "analytics"])
+
+  // Metadata
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  users      User[]
+  products   Product[]
+  categories Category[]
+  customers  Customer[]
+  orders     Order[]
+  expenses   Expense[]
+  giftCards  GiftCard[]
+  segments   Segment[]
+
+  @@index([subdomain])
+}
+
+model User {
+  id        String  @id @default(cuid())
+  clerkId   String  @unique
+  email     String
+  firstName String?
+  lastName  String?
+  imageUrl  String?
+
+  // Tenant relation
+  tenantId String
+  tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  // Role
+  role UserRole @default(MANAGER)
+
+  // Onboarding
+  hasCompletedTutorial Boolean @default(false)
+
+  // Metadata
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  lastLoginAt DateTime?
+
+  // Relations
+  ordersCreated   Order[]   @relation("OrderCreator")
+  expensesCreated Expense[] @relation("ExpenseCreator")
+
+  @@index([tenantId])
+  @@index([clerkId])
+}
+
+enum UserRole {
+  OWNER
+  ADMIN
+  MANAGER
+  SELLER
+  VIEWER
+}
+
+enum Plan {
+  FREE
+  PRO
+  BUSINESS
+}
+
+// ==========================================
+// INVENTORY MODULE
+// ==========================================
+
+model Category {
+  id          String     @id @default(cuid())
+  name        String
+  description String?
+  parentId    String?
+  parent      Category?  @relation("CategoryHierarchy", fields: [parentId], references: [id])
+  children    Category[] @relation("CategoryHierarchy")
+
+  // Tenant isolation
+  tenantId String
+  tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  // Relations
+  products Product[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([tenantId])
+  @@index([parentId])
+}
+
+model Product {
+  id String @id @default(cuid())
+
+  // Basic info
+  name        String
+  description String?
+  sku         String?
+  barcode     String?
+
+  // Type
+  type ProductType @default(PHYSICAL)
+
+  // Pricing
+  price     Decimal  @db.Decimal(10, 2)
+  costPrice Decimal? @db.Decimal(10, 2)
+
+  // Stock (for physical products)
+  trackStock    Boolean @default(true)
+  stockQuantity Int     @default(0)
+  lowStockAlert Int?
+
+  // Variants support
+  hasVariants   Boolean @default(false)
+  variantConfig Json? // { types: [{name: 'Size', values: ['S','M','L']}] }
+
+  // Images
+  images String[] @default([])
+
+  // Category
+  categoryId String?
+  category   Category? @relation(fields: [categoryId], references: [id])
+
+  // Custom fields (industry-specific)
+  customFields Json?
+
+  // Tenant isolation
+  tenantId String
+  tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  // Status
+  isActive Boolean @default(true)
+
+  // Metadata
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  variants   ProductVariant[]
+  orderItems OrderItem[]
+
+  @@index([tenantId])
+  @@index([categoryId])
+  @@index([sku])
+}
+
+model ProductVariant {
+  id String @id @default(cuid())
+
+  // Parent product
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  // Variant details
+  name    String // "Size: M, Color: Red"
+  sku     String?
+  barcode String?
+
+  // Variant attributes
+  attributes Json // { size: 'M', color: 'Red' }
+
+  // Pricing override
+  price     Decimal? @db.Decimal(10, 2)
+  costPrice Decimal? @db.Decimal(10, 2)
+
+  // Stock
+  stockQuantity Int @default(0)
+
+  // Images
+  images String[] @default([])
+
+  // Status
+  isActive Boolean @default(true)
+
+  // Metadata
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  orderItems OrderItem[]
+
+  @@index([productId])
+  @@index([sku])
+}
+
+enum ProductType {
+  PHYSICAL
+  SERVICE
+  DIGITAL
+}
+
+// ==========================================
+// CRM MODULE
+// ==========================================
+
+model Customer {
+  id String @id @default(cuid())
+
+  // Basic info
+  firstName String
+  lastName  String?
+  email     String?
+  phone     String?
+
+  // Address
+  address    String?
+  city       String?
+  postalCode String?
+  country    String?
+
+  // Segmentation
+  tags      String[] @default([])
+  segment   String? // Legacy field, will be replaced by segmentId
+  segmentId String?
+  segmentRelation Segment? @relation(fields: [segmentId], references: [id])
+
+  // Notes
+  notes String?
+
+  // Statistics (computed)
+  totalOrders Int       @default(0)
+  totalSpent  Decimal   @default(0) @db.Decimal(10, 2)
+  lastOrderAt DateTime?
+
+  // Tenant isolation
+  tenantId String
+  tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  // Metadata
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  orders Order[]
+
+  @@index([tenantId])
+  @@index([email])
+}
+
+// ==========================================
+// SALES MODULE
+// ==========================================
+
+model Order {
+  id          String @id @default(cuid())
+  orderNumber String @unique
+
+  // Customer
+  customerId String?
+  customer   Customer? @relation(fields: [customerId], references: [id])
+
+  // Guest checkout info (if no customer)
+  guestName  String?
+  guestEmail String?
+  guestPhone String?
+
+  // Status
+  status OrderStatus @default(DRAFT)
+
+  // Type
+  type OrderType @default(ORDER)
+
+  // Sales channel
+  channel String @default("online")
+
+  // Financial
+  subtotal  Decimal @db.Decimal(10, 2)
+  taxAmount Decimal @default(0) @db.Decimal(10, 2)
+  taxRate   Decimal @default(0) @db.Decimal(5, 2)
+  discount  Decimal @default(0) @db.Decimal(10, 2)
+  total     Decimal @db.Decimal(10, 2)
+
+  // Gift card application
+  giftCardId     String?
+  giftCard       GiftCard? @relation(fields: [giftCardId], references: [id])
+  giftCardAmount Decimal   @default(0) @db.Decimal(10, 2)
+
+  // Payment
+  paymentStatus PaymentStatus @default(PENDING)
+  paymentMethod String?
+  paidAt        DateTime?
+
+  // Shipping
+  shippingAddress String?
+  shippingCost    Decimal   @default(0) @db.Decimal(10, 2)
+  shippedAt       DateTime?
+
+  // Notes
+  notes         String?
+  internalNotes String?
+
+  // Tenant isolation
+  tenantId String
+  tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  // Created by
+  createdById String?
+  createdBy   User?   @relation("OrderCreator", fields: [createdById], references: [id])
+
+  // Metadata
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  items OrderItem[]
+
+  @@index([tenantId])
+  @@index([customerId])
+  @@index([orderNumber])
+  @@index([status])
+  @@index([createdAt])
+}
+
+model OrderItem {
+  id String @id @default(cuid())
+
+  // Order
+  orderId String
+  order   Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  // Product
+  productId String?
+  product   Product? @relation(fields: [productId], references: [id])
+
+  // Variant
+  variantId String?
+  variant   ProductVariant? @relation(fields: [variantId], references: [id])
+
+  // Snapshot (in case product is deleted)
+  name String
+  sku  String?
+
+  // Quantity & Pricing
+  quantity   Int
+  unitPrice  Decimal @db.Decimal(10, 2)
+  totalPrice Decimal @db.Decimal(10, 2)
+
+  // Metadata
+  createdAt DateTime @default(now())
+
+  @@index([orderId])
+  @@index([productId])
+}
+
+enum OrderStatus {
+  DRAFT
+  CONFIRMED
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+  REFUNDED
+}
+
+enum OrderType {
+  QUOTE
+  ORDER
+  INVOICE
+}
+
+enum PaymentStatus {
+  PENDING
+  PARTIAL
+  PAID
+  REFUNDED
+}
+
+// ==========================================
+// FINANCE MODULE
+// ==========================================
+
+model Expense {
+  id String @id @default(cuid())
+
+  // Basic info
+  title       String
+  description String?
+  amount      Decimal @db.Decimal(10, 2)
+
+  // Category (industry-specific)
+  category String
+
+  // Date
+  date DateTime @default(now())
+
+  // Receipt
+  receiptUrl String?
+
+  // Payment method
+  paymentMethod String?
+
+  // Tenant isolation
+  tenantId String
+  tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  // Created by
+  createdById String?
+  createdBy   User?   @relation("ExpenseCreator", fields: [createdById], references: [id])
+
+  // Metadata
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([tenantId])
+  @@index([category])
+  @@index([date])
+}
+
+// ==========================================
+// GIFT CARDS MODULE
+// ==========================================
+
+model GiftCard {
+  id   String @id @default(cuid())
+  code String @unique
+
+  // Amounts
+  initialAmount Decimal @db.Decimal(10, 2)
+  balance       Decimal @db.Decimal(10, 2)
+
+  // Status
+  isActive Boolean @default(true)
+
+  // Expiration
+  expiresAt DateTime?
+
+  // Tenant isolation
+  tenantId String
+  tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  // Metadata
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  usedAt    DateTime?
+
+  // Relations
+  orders Order[]
+
+  @@index([tenantId])
+  @@index([code])
+}
+
+// ==========================================
+// CUSTOMER SEGMENTATION (BUSINESS PLAN)
+// ==========================================
+
+model Segment {
+  id          String  @id @default(cuid())
+  name        String
+  description String?
+  color       String  @default("#3b82f6") // For UI display
+
+  // Segmentation criteria (stored as JSON)
+  criteria Json // { "totalSpent": { "min": 1000 }, "orderCount": { "min": 5 }, "tags": ["VIP"] }
+
+  // Stats (updated periodically)
+  customerCount Int @default(0)
+
+  // Tenant isolation
+  tenantId String
+  tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  // Metadata
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  customers Customer[]
+
+  @@index([tenantId])
+}
+
