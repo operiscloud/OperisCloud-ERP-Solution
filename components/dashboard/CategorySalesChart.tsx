@@ -9,6 +9,7 @@ interface CategorySalesChartProps {
     percentage: number;
   }>;
   currency: string;
+  isLoading?: boolean;
 }
 
 const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#14b8a6'];
@@ -59,40 +60,47 @@ const renderCustomizedLabel = ({
   );
 };
 
-export function CategorySalesChart({ data, currency }: CategorySalesChartProps) {
+export function CategorySalesChart({ data, currency, isLoading = false }: CategorySalesChartProps) {
   const hasData = data.length > 0 && data.some(d => d.value > 0);
 
   return (
-    <div className="bg-white rounded-lg shadow p-6">
-      <h2 className="text-lg font-semibold text-gray-900 mb-6">Ventes par Catégorie</h2>
+    <div className="bg-white rounded-lg shadow p-6 h-full flex flex-col">
+      <h2 className="text-lg font-semibold text-gray-900 mb-4">Ventes par Catégorie</h2>
 
       {hasData ? (
-        <ResponsiveContainer width="100%" height={350}>
-          <PieChart>
-            <Pie
-              data={data}
-              cx="50%"
-              cy="50%"
-              labelLine={false}
-              label={renderCustomizedLabel}
-              outerRadius={120}
-              fill="#8884d8"
-              dataKey="value"
-            >
-              {data.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-              ))}
-            </Pie>
-            <Tooltip content={(props) => <CustomTooltip {...props} currency={currency} />} />
-            <Legend
-              verticalAlign="bottom"
-              height={36}
-              wrapperStyle={{ fontSize: 12 }}
-            />
-          </PieChart>
-        </ResponsiveContainer>
+        <div className={`flex-1 min-h-[300px] relative ${isLoading ? 'opacity-50' : ''}`}>
+          {isLoading && (
+            <div className="absolute inset-0 flex items-center justify-center bg-white/50 z-10">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            </div>
+          )}
+          <ResponsiveContainer width="100%" height="100%">
+            <PieChart>
+              <Pie
+                data={data}
+                cx="50%"
+                cy="50%"
+                labelLine={false}
+                label={renderCustomizedLabel}
+                outerRadius={120}
+                fill="#8884d8"
+                dataKey="value"
+              >
+                {data.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                ))}
+              </Pie>
+              <Tooltip content={(props) => <CustomTooltip {...props} currency={currency} />} />
+              <Legend
+                verticalAlign="bottom"
+                height={36}
+                wrapperStyle={{ fontSize: 12 }}
+              />
+            </PieChart>
+          </ResponsiveContainer>
+        </div>
       ) : (
-        <div className="h-[350px] flex items-center justify-center text-gray-500">
+        <div className="flex-1 min-h-[300px] flex items-center justify-center text-gray-500">
           <div className="text-center">
             <p className="text-sm">Aucune donnée de catégorie disponible</p>
             <p className="text-xs mt-2">Les ventes seront affichées ici une fois que vous aurez des produits avec catégories</p>

@@ -11,6 +11,7 @@ interface TopProductsChartProps {
     quantity: number;
   }>;
   hasAccess?: boolean;
+  isLoading?: boolean;
 }
 
 const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'];
@@ -30,14 +31,19 @@ const CustomTooltip = ({ active, payload }: any) => {
   return null;
 };
 
-export function TopProductsChart({ data, hasAccess = true }: TopProductsChartProps) {
+export function TopProductsChart({ data, hasAccess = true, isLoading = false }: TopProductsChartProps) {
   return (
-    <div className="bg-white rounded-lg shadow p-6 relative">
-      <h2 className="text-lg font-semibold text-gray-900 mb-6">Top 5 Produits les Plus Vendus</h2>
+    <div className="bg-white rounded-lg shadow p-6 relative h-full flex flex-col">
+      <h2 className="text-lg font-semibold text-gray-900 mb-4">Top 5 Produits les Plus Vendus</h2>
 
       {/* Chart content with blur when locked */}
-      <div className={hasAccess ? '' : 'blur-sm pointer-events-none select-none'}>
-        <ResponsiveContainer width="100%" height={350}>
+      <div className={`flex-1 min-h-[350px] relative ${hasAccess ? '' : 'blur-sm pointer-events-none select-none'} ${isLoading ? 'opacity-50' : ''}`}>
+        {isLoading && hasAccess && (
+          <div className="absolute inset-0 flex items-center justify-center bg-white/50 z-10">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+          </div>
+        )}
+        <ResponsiveContainer width="100%" height="100%">
           <BarChart
             data={data.length > 0 ? data : [
               { name: 'Produit 1', quantity: 45 },
@@ -46,7 +52,7 @@ export function TopProductsChart({ data, hasAccess = true }: TopProductsChartPro
               { name: 'Produit 4', quantity: 28 },
               { name: 'Produit 5', quantity: 22 },
             ]}
-            margin={{ top: 20, right: 30, left: 20, bottom: 80 }}
+            margin={{ top: 10, right: 20, left: 10, bottom: 5 }}
           >
             <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
             <XAxis
@@ -54,7 +60,7 @@ export function TopProductsChart({ data, hasAccess = true }: TopProductsChartPro
               tick={{ fontSize: 11, fill: '#6b7280' }}
               angle={-35}
               textAnchor="end"
-              height={100}
+              height={80}
               interval={0}
             />
             <YAxis
@@ -70,7 +76,7 @@ export function TopProductsChart({ data, hasAccess = true }: TopProductsChartPro
             <Bar
               dataKey="quantity"
               radius={[8, 8, 0, 0]}
-              maxBarSize={60}
+              maxBarSize={80}
             >
               {(data.length > 0 ? data : [
                 { name: 'Produit 1', quantity: 45 },

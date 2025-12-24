@@ -2,20 +2,8 @@ import { auth } from '@clerk/nextjs/server';
 import { redirect } from 'next/navigation';
 import { prisma } from '@/lib/prisma';
 import { formatCurrency, calculatePercentageChange } from '@/lib/utils';
-import {
-  TrendingUp,
-  TrendingDown,
-  ShoppingCart,
-  Users,
-  DollarSign,
-  Package,
-} from 'lucide-react';
-import { StatsCard } from '@/components/dashboard/StatsCard';
-import { RecentOrders } from '@/components/dashboard/RecentOrders';
-import { RevenueChart } from '@/components/dashboard/RevenueChart';
-import { TopProductsChart } from '@/components/dashboard/TopProductsChart';
-import { ProfitMarginChart } from '@/components/dashboard/ProfitMarginChart';
-import { CategorySalesChart } from '@/components/dashboard/CategorySalesChart';
+import { DashboardClient } from '@/components/dashboard/DashboardClient';
+import { filterWidgetsByPlan, mergeWithDefaults, DashboardWidgetConfig } from '@/lib/dashboard/widget-config-helper';
 import TutorialWrapper from '@/components/tutorial/TutorialWrapper';
 
 export default async function DashboardPage() {
@@ -29,7 +17,13 @@ export default async function DashboardPage() {
     select: {
       tenantId: true,
       hasCompletedTutorial: true,
-      tenant: { select: { currency: true, plan: true } }
+      tenant: {
+        select: {
+          currency: true,
+          plan: true,
+          dashboardWidgetConfig: true,
+        }
+      }
     },
   });
 
@@ -148,7 +142,7 @@ export default async function DashboardPage() {
   });
 
   // Recent orders
-  const recentOrders = await prisma.order.findMany({
+  const recentOrdersRaw = await prisma.order.findMany({
     where: {
       tenantId,
       status: { not: 'DRAFT' },
@@ -164,6 +158,35 @@ export default async function DashboardPage() {
     orderBy: { createdAt: 'desc' },
     take: 5,
   });
+
+  // Convert Decimal fields to numbers for client components
+  const recentOrders = recentOrdersRaw.map(order => ({
+    ...order,
+    subtotal: Number(order.subtotal),
+    taxAmount: order.taxAmount ? Number(order.taxAmount) : null,
+    taxRate: order.taxRate ? Number(order.taxRate) : null,
+    discount: order.discount ? Number(order.discount) : null,
+    total: Number(order.total),
+    giftCardAmount: order.giftCardAmount ? Number(order.giftCardAmount) : null,
+    shippingCost: order.shippingCost ? Number(order.shippingCost) : null,
+    customer: order.customer ? {
+      ...order.customer,
+      totalSpent: Number(order.customer.totalSpent),
+    } : null,
+    items: order.items.map(item => ({
+      ...item,
+      quantity: Number(item.quantity),
+      unitPrice: Number(item.unitPrice),
+      totalPrice: Number(item.totalPrice),
+      product: item.product ? {
+        ...item.product,
+        price: Number(item.product.price),
+        costPrice: item.product.costPrice ? Number(item.product.costPrice) : null,
+        stockQuantity: item.product.stockQuantity ? Number(item.product.stockQuantity) : null,
+        lowStockAlert: item.product.lowStockAlert ? Number(item.product.lowStockAlert) : null,
+      } : null,
+    })),
+  }));
 
   // Revenue data for last 6 months
   const revenueData = [];
@@ -219,8 +242,8 @@ export default async function DashboardPage() {
   }));
 
   // Profit margin data for PRO/BUSINESS users
-  let profitMarginData = [];
-  let categorySalesData = [];
+  let profitMarginData: Array<{ month: string; revenue: number; cost: number; profit: number; margin: number }> = [];
+  let categorySalesData: Array<{ name: string; value: number; percentage: number }> = [];
 
   if (hasProAccess) {
     // Calculate profit margin for last 6 months
@@ -309,128 +332,48 @@ export default async function DashboardPage() {
       .slice(0, 7); // Top 7 categories
   }
 
+  // Load and merge widget configuration
+  const rawConfig = user.tenant.dashboardWidgetConfig as DashboardWidgetConfig | null;
+  const userConfig = mergeWithDefaults(rawConfig);
+  const widgetConfig = filterWidgetsByPlan(userConfig, user.tenant.plan);
+
+  // Prepare dashboard data
+  const dashboardData = {
+    // Stats
+    revenueValue: formatCurrency(totalCurrentRevenue, user.tenant.currency),
+    revenueChange,
+    ordersValue: currentOrders.toString(),
+    ordersChange,
+    customersValue: totalCustomers.toString(),
+    customersSubtitle: `+${newCustomers} ce mois`,
+    customersChange,
+    productsValue: totalProducts.toString(),
+    productsSubtitle: lowStockProducts > 0 ? `${lowStockProducts} en stock bas` : 'Stock OK',
+
+    // Charts
+    revenueData,
+    topProductsData,
+    profitMarginData,
+    categorySalesData,
+
+    // Recent orders
+    recentOrders,
+
+    // Other
+    currency: user.tenant.currency,
+    hasProAccess,
+  };
+
   return (
-    <div className="space-y-6">
-      {/* Page Header */}
-      <div>
-        <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-        <p className="text-gray-600">Vue d&apos;ensemble de votre activité</p>
-      </div>
-
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-        <StatsCard
-          title="Chiffre d'affaires"
-          value={formatCurrency(totalCurrentRevenue, user.tenant.currency)}
-          change={revenueChange}
-          icon={DollarSign}
-          iconColor="text-green-600"
-          iconBg="bg-green-100"
-        />
-
-        <StatsCard
-          title="Commandes"
-          value={currentOrders.toString()}
-          change={ordersChange}
-          icon={ShoppingCart}
-          iconColor="text-blue-600"
-          iconBg="bg-blue-100"
-        />
-
-        <StatsCard
-          title="Clients"
-          value={totalCustomers.toString()}
-          subtitle={`+${newCustomers} ce mois`}
-          change={customersChange}
-          icon={Users}
-          iconColor="text-purple-600"
-          iconBg="bg-purple-100"
-        />
-
-        <StatsCard
-          title="Produits"
-          value={totalProducts.toString()}
-          subtitle={lowStockProducts > 0 ? `${lowStockProducts} en stock bas` : 'Stock OK'}
-          icon={Package}
-          iconColor="text-orange-600"
-          iconBg="bg-orange-100"
-        />
-      </div>
-
-      {/* Charts */}
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <RevenueChart data={revenueData} currency={user.tenant.currency} />
-        <TopProductsChart data={topProductsData} hasAccess={hasProAccess} />
-      </div>
-
-      {/* Advanced Charts - PRO/BUSINESS only */}
-      {hasProAccess && (
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-          <ProfitMarginChart data={profitMarginData} currency={user.tenant.currency} />
-          <CategorySalesChart data={categorySalesData} currency={user.tenant.currency} />
-        </div>
-      )}
-
-      {/* Recent Orders */}
-      <div className="bg-white rounded-lg shadow">
-        <div className="px-6 py-4 border-b border-gray-200">
-          <h2 className="text-lg font-semibold text-gray-900">
-            Commandes récentes
-          </h2>
-        </div>
-        <RecentOrders orders={recentOrders} currency={user.tenant.currency} />
-      </div>
-
-      {/* Quick Actions */}
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        <a
-          href="/sales/new"
-          className="block p-6 bg-white rounded-lg shadow hover:shadow-md transition-shadow border border-gray-200"
-        >
-          <div className="flex items-center space-x-3">
-            <div className="p-3 bg-blue-100 rounded-lg">
-              <ShoppingCart className="h-6 w-6 text-blue-600" />
-            </div>
-            <div>
-              <h3 className="font-semibold text-gray-900">Nouvelle commande</h3>
-              <p className="text-sm text-gray-600">Créer une vente rapidement</p>
-            </div>
-          </div>
-        </a>
-
-        <a
-          href="/inventory/new"
-          className="block p-6 bg-white rounded-lg shadow hover:shadow-md transition-shadow border border-gray-200"
-        >
-          <div className="flex items-center space-x-3">
-            <div className="p-3 bg-green-100 rounded-lg">
-              <Package className="h-6 w-6 text-green-600" />
-            </div>
-            <div>
-              <h3 className="font-semibold text-gray-900">Ajouter un produit</h3>
-              <p className="text-sm text-gray-600">Enrichir votre catalogue</p>
-            </div>
-          </div>
-        </a>
-
-        <a
-          href="/crm/new"
-          className="block p-6 bg-white rounded-lg shadow hover:shadow-md transition-shadow border border-gray-200"
-        >
-          <div className="flex items-center space-x-3">
-            <div className="p-3 bg-purple-100 rounded-lg">
-              <Users className="h-6 w-6 text-purple-600" />
-            </div>
-            <div>
-              <h3 className="font-semibold text-gray-900">Nouveau client</h3>
-              <p className="text-sm text-gray-600">Ajouter à votre CRM</p>
-            </div>
-          </div>
-        </a>
-      </div>
+    <>
+      <DashboardClient
+        initialConfig={widgetConfig}
+        data={dashboardData}
+        plan={user.tenant.plan}
+      />
 
       {/* Tutorial Modal */}
       <TutorialWrapper showTutorial={!user.hasCompletedTutorial} />
-    </div>
+    </>
   );
 }

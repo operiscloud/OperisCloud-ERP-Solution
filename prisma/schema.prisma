@@ -61,6 +61,9 @@ model Tenant {
   // Variant Configuration
   variantConfig Json? // Variant options like Size, Color, etc.
 
+  // Dashboard Widget Configuration
+  dashboardWidgetConfig Json? // { widgets: [...], layout: {...} }
+
   // Modules enabled
   enabledModules String[] @default(["inventory", "sales", "finance", "giftcards", "analytics"])
 

@@ -11,6 +11,7 @@ interface ProfitMarginChartProps {
     margin: number;
   }>;
   currency: string;
+  isLoading?: boolean;
 }
 
 const CustomTooltip = ({ active, payload, currency }: any) => {
@@ -38,13 +39,19 @@ const CustomTooltip = ({ active, payload, currency }: any) => {
   return null;
 };
 
-export function ProfitMarginChart({ data, currency }: ProfitMarginChartProps) {
+export function ProfitMarginChart({ data, currency, isLoading = false }: ProfitMarginChartProps) {
   return (
-    <div className="bg-white rounded-lg shadow p-6">
-      <h2 className="text-lg font-semibold text-gray-900 mb-6">Évolution de la Marge Bénéficiaire</h2>
+    <div className="bg-white rounded-lg shadow p-6 h-full flex flex-col">
+      <h2 className="text-lg font-semibold text-gray-900 mb-4">Évolution de la Marge Bénéficiaire</h2>
 
-      <ResponsiveContainer width="100%" height={350}>
-        <LineChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
+      <div className={`flex-1 min-h-[300px] relative ${isLoading ? 'opacity-50' : ''}`}>
+        {isLoading && (
+          <div className="absolute inset-0 flex items-center justify-center bg-white/50 z-10">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+          </div>
+        )}
+        <ResponsiveContainer width="100%" height="100%">
+          <LineChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
           <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
           <XAxis
             dataKey="month"
@@ -114,8 +121,9 @@ export function ProfitMarginChart({ data, currency }: ProfitMarginChartProps) {
             strokeDasharray="5 5"
             dot={{ fill: '#8b5cf6', r: 4 }}
           />
-        </LineChart>
-      </ResponsiveContainer>
+          </LineChart>
+        </ResponsiveContainer>
+      </div>
     </div>
   );
 }
