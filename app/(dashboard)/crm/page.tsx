@@ -69,7 +69,7 @@ export default async function CRMPage({
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Clients</h1>
           <p className="text-gray-600">Gérez votre base clients</p>
@@ -90,7 +90,7 @@ export default async function CRMPage({
             </div>
           )}
         </div>
-        <div className="flex items-center space-x-3">
+        <div className="flex items-center gap-3 flex-wrap">
           <Link
             href="/crm/segments"
             className="inline-flex items-center bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-50 font-medium"

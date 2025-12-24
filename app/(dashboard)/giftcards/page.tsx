@@ -37,14 +37,14 @@ export default async function GiftCardsPage() {
 
   return (
       <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Bons cadeaux</h1>
           <p className="text-gray-600">Gérez vos bons cadeaux et cartes prépayées</p>
         </div>
         <Link
           href="/giftcards/new"
-          className="inline-flex items-center bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 font-medium"
+          className="inline-flex items-center justify-center bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 font-medium"
         >
           <Plus className="h-5 w-5 mr-2" />
           Nouveau bon cadeau

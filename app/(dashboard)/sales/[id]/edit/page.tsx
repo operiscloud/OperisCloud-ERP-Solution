@@ -102,6 +102,7 @@ export default function EditOrderPage({ params }: { params: { id: string } }) {
     taxRate: '8.1',
     discount: '0',
     shippingCost: '0',
+    dueDate: '',
     notes: '',
   });
 
@@ -133,6 +134,7 @@ export default function EditOrderPage({ params }: { params: { id: string } }) {
           taxRate: orderData.taxRate.toString(),
           discount: orderData.discount.toString(),
           shippingCost: orderData.shippingCost ? orderData.shippingCost.toString() : '0',
+          dueDate: orderData.dueDate ? new Date(orderData.dueDate).toISOString().split('T')[0] : '',
           notes: orderData.notes || '',
         });
 
@@ -319,6 +321,7 @@ export default function EditOrderPage({ params }: { params: { id: string } }) {
           taxRate: parseFloat(formData.taxRate),
           discount: parseFloat(formData.discount),
           shippingCost: parseFloat(formData.shippingCost),
+          dueDate: formData.dueDate ? new Date(formData.dueDate).toISOString() : undefined,
           notes: formData.notes || undefined,
           items: items.map((item) => ({
             productId: item.productId,
@@ -581,6 +584,19 @@ export default function EditOrderPage({ params }: { params: { id: string } }) {
                   <option value="QUOTE">Devis</option>
                   <option value="INVOICE">Facture</option>
                 </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Date d'échéance (optionnel)
+                </label>
+                <input
+                  type="date"
+                  value={formData.dueDate}
+                  onChange={(e) => setFormData({ ...formData, dueDate: e.target.value })}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+                  placeholder="Pour les factures uniquement"
+                />
               </div>
 
               <div>

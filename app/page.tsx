@@ -1,9 +1,12 @@
 import Link from 'next/link';
 import {
   ArrowRight, Check, Package, Users, TrendingUp, FileText, Gift, BarChart3,
-  Zap, Shield, Clock, Globe, Sparkles, Star, MessageCircle, ArrowUpRight
+  Zap, Shield, Clock, Globe, Sparkles, Star, MessageCircle, ArrowUpRight,
+  UserPlus, Settings, Rocket, X
 } from 'lucide-react';
 import { Metadata } from 'next';
+import ScannerShowcase from '@/components/landing/ScannerShowcase';
+import MobileMenu from '@/components/landing/MobileMenu';
 
 export const metadata: Metadata = {
   title: 'OperisCloud - Solution de Gestion ERP pour PME et Artisans en Suisse',
@@ -50,7 +53,7 @@ export default function HomePage() {
             <div className="flex items-center gap-2 sm:gap-4">
               <Link
                 href="/sign-in"
-                className="text-gray-600 hover:text-gray-900 font-medium transition-colors text-sm sm:text-base"
+                className="hidden sm:block text-gray-600 hover:text-gray-900 font-medium transition-colors text-sm sm:text-base"
               >
                 Connexion
               </Link>
@@ -60,6 +63,7 @@ export default function HomePage() {
               >
                 Essai gratuit
               </Link>
+              <MobileMenu />
             </div>
           </div>
         </nav>
@@ -125,19 +129,121 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Social Proof */}
-      <section className="py-12 bg-gray-50 border-y border-gray-200">
+      {/* Video Demo Section */}
+      <section className="py-24 bg-white">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-8">
-            <p className="text-gray-600 font-medium">Ils nous font confiance</p>
-          </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 items-center justify-items-center opacity-60">
-            {/* Placeholder pour logos clients - à remplacer par de vrais logos */}
-            {[1, 2, 3, 4].map((i) => (
-              <div key={i} className="text-gray-400 font-bold text-2xl">
-                Client {i}
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center mb-12">
+              <div className="inline-flex items-center gap-2 bg-blue-50 border border-blue-200 rounded-full px-4 py-2 mb-6">
+                <Sparkles className="h-4 w-4 text-blue-600" />
+                <span className="text-sm font-semibold text-blue-900">
+                  Découvrez OperisCloud en action
+                </span>
               </div>
-            ))}
+              <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+                Voyez comment ça fonctionne
+              </h2>
+              <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+                Une démonstration rapide de 2 minutes pour comprendre comment OperisCloud simplifie votre gestion quotidienne
+              </p>
+            </div>
+
+            {/* Video Container */}
+            <div className="relative rounded-2xl overflow-hidden shadow-2xl border-4 border-gray-200 bg-gradient-to-br from-gray-100 to-gray-200">
+              {/* Placeholder for video - you can replace this with an actual video embed */}
+              <div className="aspect-video bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center relative group">
+                {/* Play button overlay */}
+                <div className="absolute inset-0 bg-black/30 group-hover:bg-black/40 transition-colors flex items-center justify-center cursor-pointer">
+                  <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center shadow-2xl group-hover:scale-110 transition-transform">
+                    <div className="w-0 h-0 border-l-[20px] border-l-blue-600 border-t-[12px] border-t-transparent border-b-[12px] border-b-transparent ml-1"></div>
+                  </div>
+                </div>
+
+                {/* Mockup screenshot */}
+                <div className="absolute inset-0 flex items-center justify-center opacity-50">
+                  <div className="text-center text-white">
+                    <Package className="h-24 w-24 mx-auto mb-4 opacity-50" />
+                    <p className="text-xl font-semibold opacity-75">Aperçu de l'interface OperisCloud</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Video caption */}
+              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-6 text-white">
+                <p className="font-semibold text-lg">Créez votre première facture en 30 secondes</p>
+                <p className="text-sm text-gray-300">Voir la démo complète</p>
+              </div>
+            </div>
+
+            {/* Features below video */}
+            <div className="grid md:grid-cols-3 gap-6 mt-12">
+              <div className="text-center p-6 bg-gray-50 rounded-xl">
+                <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Zap className="h-6 w-6 text-blue-600" />
+                </div>
+                <h3 className="font-bold text-gray-900 mb-2">Interface intuitive</h3>
+                <p className="text-sm text-gray-600">Aucune formation nécessaire pour commencer</p>
+              </div>
+              <div className="text-center p-6 bg-gray-50 rounded-xl">
+                <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Clock className="h-6 w-6 text-purple-600" />
+                </div>
+                <h3 className="font-bold text-gray-900 mb-2">Gain de temps</h3>
+                <p className="text-sm text-gray-600">Divisez par 3 le temps de gestion administrative</p>
+              </div>
+              <div className="text-center p-6 bg-gray-50 rounded-xl">
+                <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <TrendingUp className="h-6 w-6 text-green-600" />
+                </div>
+                <h3 className="font-bold text-gray-900 mb-2">Résultats mesurables</h3>
+                <p className="text-sm text-gray-600">Tableaux de bord en temps réel</p>
+              </div>
+            </div>
+
+            {/* CTA */}
+            <div className="text-center mt-12">
+              <Link
+                href="/sign-up"
+                className="inline-flex items-center justify-center bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-8 py-4 rounded-xl hover:shadow-2xl hover:scale-105 font-bold text-lg transition-all"
+              >
+                Démarrer gratuitement
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </Link>
+              <p className="text-sm text-gray-500 mt-4">
+                Aucune installation • Prêt en 2 minutes • Sans carte bancaire
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Stats Section */}
+      <section className="py-16 bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 relative overflow-hidden">
+        <div className="absolute inset-0 bg-grid-white/10"></div>
+        <div className="container mx-auto px-4 relative z-10">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12">
+            <div className="text-center">
+              <div className="text-4xl md:text-5xl font-bold text-white mb-2">500+</div>
+              <div className="text-blue-100 font-medium">Entreprises actives</div>
+            </div>
+            <div className="text-center">
+              <div className="text-4xl md:text-5xl font-bold text-white mb-2">50K+</div>
+              <div className="text-blue-100 font-medium">Factures générées</div>
+            </div>
+            <div className="text-center">
+              <div className="text-4xl md:text-5xl font-bold text-white mb-2">99.9%</div>
+              <div className="text-blue-100 font-medium">Disponibilité</div>
+            </div>
+            <div className="text-center">
+              <div className="text-4xl md:text-5xl font-bold text-white mb-2">4.9/5</div>
+              <div className="text-blue-100 font-medium">
+                <div className="flex items-center justify-center gap-1 mt-1">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                  ))}
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -322,6 +428,9 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Scanner Showcase Section */}
+      <ScannerShowcase />
+
       {/* Benefits Section */}
       <section className="py-24 bg-gradient-to-b from-gray-50 to-white">
         <div className="container mx-auto px-4">
@@ -424,6 +533,282 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* How It Works Section */}
+      <section className="py-24 bg-white relative overflow-hidden">
+        <div className="container mx-auto px-4">
+          <div className="text-center max-w-3xl mx-auto mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+              Démarrez en 3 étapes simples
+            </h2>
+            <p className="text-xl text-gray-600">
+              Lancez votre gestion d'entreprise en quelques minutes
+            </p>
+          </div>
+
+          <div className="max-w-5xl mx-auto">
+            <div className="relative">
+              {/* Timeline line */}
+              <div className="hidden md:block absolute top-1/2 left-0 right-0 h-1 bg-gradient-to-r from-blue-200 via-blue-400 to-blue-600 transform -translate-y-1/2"></div>
+
+              <div className="grid md:grid-cols-3 gap-8 md:gap-12 relative">
+                {/* Step 1 */}
+                <div className="relative">
+                  <div className="bg-white rounded-2xl p-8 border-2 border-blue-100 hover:border-blue-500 hover:shadow-2xl transition-all relative z-10">
+                    <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center mb-6 mx-auto shadow-lg">
+                      <UserPlus className="h-8 w-8 text-white" />
+                    </div>
+                    <div className="absolute -top-4 -right-4 w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold text-xl shadow-lg">
+                      1
+                    </div>
+                    <h3 className="text-2xl font-bold text-gray-900 mb-3 text-center">
+                      Créez votre compte
+                    </h3>
+                    <p className="text-gray-600 text-center leading-relaxed">
+                      Inscription gratuite en 2 minutes. Aucune carte bancaire requise. Confirmez votre email et c'est parti.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Step 2 */}
+                <div className="relative">
+                  <div className="bg-white rounded-2xl p-8 border-2 border-purple-100 hover:border-purple-500 hover:shadow-2xl transition-all relative z-10">
+                    <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center mb-6 mx-auto shadow-lg">
+                      <Settings className="h-8 w-8 text-white" />
+                    </div>
+                    <div className="absolute -top-4 -right-4 w-12 h-12 bg-purple-600 rounded-full flex items-center justify-center text-white font-bold text-xl shadow-lg">
+                      2
+                    </div>
+                    <h3 className="text-2xl font-bold text-gray-900 mb-3 text-center">
+                      Configurez rapidement
+                    </h3>
+                    <p className="text-gray-600 text-center leading-relaxed">
+                      Importez vos données ou démarrez de zéro. Templates pré-configurés selon votre secteur d'activité.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Step 3 */}
+                <div className="relative">
+                  <div className="bg-white rounded-2xl p-8 border-2 border-green-100 hover:border-green-500 hover:shadow-2xl transition-all relative z-10">
+                    <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl flex items-center justify-center mb-6 mx-auto shadow-lg">
+                      <Rocket className="h-8 w-8 text-white" />
+                    </div>
+                    <div className="absolute -top-4 -right-4 w-12 h-12 bg-green-600 rounded-full flex items-center justify-center text-white font-bold text-xl shadow-lg">
+                      3
+                    </div>
+                    <h3 className="text-2xl font-bold text-gray-900 mb-3 text-center">
+                      Lancez votre activité
+                    </h3>
+                    <p className="text-gray-600 text-center leading-relaxed">
+                      Commencez à créer vos factures, gérer vos stocks et suivre vos performances immédiatement.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* CTA */}
+            <div className="text-center mt-12">
+              <Link
+                href="/sign-up"
+                className="inline-flex items-center justify-center bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-10 py-5 rounded-xl hover:shadow-2xl hover:scale-105 font-bold text-lg transition-all"
+              >
+                Démarrer maintenant - C'est gratuit
+                <ArrowRight className="ml-2 h-6 w-6" />
+              </Link>
+              <p className="text-sm text-gray-500 mt-4">
+                Aucune carte bancaire • Sans engagement • Support francophone
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Comparison Section */}
+      <section className="py-24 bg-gradient-to-b from-gray-50 to-white">
+        <div className="container mx-auto px-4">
+          <div className="text-center max-w-3xl mx-auto mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+              Pourquoi choisir OperisCloud plutôt que Bexio ?
+            </h2>
+            <p className="text-xl text-gray-600">
+              Comparaison objective des fonctionnalités et tarifs
+            </p>
+          </div>
+
+          <div className="max-w-5xl mx-auto">
+            <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-200">
+              {/* Header */}
+              <div className="grid grid-cols-3 gap-4 p-6 bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-gray-200">
+                <div className="text-gray-600 font-semibold">Fonctionnalité</div>
+                <div className="text-center">
+                  <div className="font-bold text-blue-600 text-lg mb-1">OperisCloud</div>
+                  <div className="text-sm text-gray-600">À partir de 0 CHF</div>
+                </div>
+                <div className="text-center">
+                  <div className="font-bold text-gray-700 text-lg mb-1">Bexio</div>
+                  <div className="text-sm text-gray-600">À partir de 35 CHF/mois</div>
+                </div>
+              </div>
+
+              {/* Rows */}
+              <div className="divide-y divide-gray-200">
+                {/* Pricing */}
+                <div className="grid grid-cols-3 gap-4 p-6 hover:bg-gray-50 transition-colors">
+                  <div className="flex items-center">
+                    <span className="font-medium text-gray-900">Plan gratuit</span>
+                  </div>
+                  <div className="flex items-center justify-center">
+                    <Check className="h-6 w-6 text-green-600" />
+                  </div>
+                  <div className="flex items-center justify-center">
+                    <X className="h-6 w-6 text-red-500" />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-3 gap-4 p-6 hover:bg-gray-50 transition-colors">
+                  <div className="flex items-center">
+                    <span className="font-medium text-gray-900">Scanner de code-barres mobile</span>
+                  </div>
+                  <div className="flex items-center justify-center">
+                    <Check className="h-6 w-6 text-green-600" />
+                  </div>
+                  <div className="flex items-center justify-center">
+                    <span className="text-sm text-gray-500">Module payant</span>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-3 gap-4 p-6 hover:bg-gray-50 transition-colors">
+                  <div className="flex items-center">
+                    <span className="font-medium text-gray-900">Gestion des bons cadeaux</span>
+                  </div>
+                  <div className="flex items-center justify-center">
+                    <Check className="h-6 w-6 text-green-600" />
+                  </div>
+                  <div className="flex items-center justify-center">
+                    <X className="h-6 w-6 text-red-500" />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-3 gap-4 p-6 hover:bg-gray-50 transition-colors">
+                  <div className="flex items-center">
+                    <span className="font-medium text-gray-900">Rappels de paiement automatiques</span>
+                  </div>
+                  <div className="flex items-center justify-center">
+                    <Check className="h-6 w-6 text-green-600" />
+                  </div>
+                  <div className="flex items-center justify-center">
+                    <span className="text-sm text-gray-500">Module payant</span>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-3 gap-4 p-6 hover:bg-gray-50 transition-colors">
+                  <div className="flex items-center">
+                    <span className="font-medium text-gray-900">Interface moderne et intuitive</span>
+                  </div>
+                  <div className="flex items-center justify-center">
+                    <Check className="h-6 w-6 text-green-600" />
+                  </div>
+                  <div className="flex items-center justify-center">
+                    <span className="text-sm text-gray-500">Interface datée</span>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-3 gap-4 p-6 hover:bg-gray-50 transition-colors">
+                  <div className="flex items-center">
+                    <span className="font-medium text-gray-900">Facturation illimitée</span>
+                  </div>
+                  <div className="flex items-center justify-center">
+                    <div className="text-center">
+                      <Check className="h-6 w-6 text-green-600 mx-auto" />
+                      <span className="text-xs text-gray-500 block mt-1">Dès 29 CHF/mois</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-center">
+                    <div className="text-center">
+                      <Check className="h-6 w-6 text-green-600 mx-auto" />
+                      <span className="text-xs text-gray-500 block mt-1">Dès 35 CHF/mois</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-3 gap-4 p-6 hover:bg-gray-50 transition-colors">
+                  <div className="flex items-center">
+                    <span className="font-medium text-gray-900">Support francophone inclus</span>
+                  </div>
+                  <div className="flex items-center justify-center">
+                    <Check className="h-6 w-6 text-green-600" />
+                  </div>
+                  <div className="flex items-center justify-center">
+                    <Check className="h-6 w-6 text-green-600" />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-3 gap-4 p-6 hover:bg-gray-50 transition-colors">
+                  <div className="flex items-center">
+                    <span className="font-medium text-gray-900">Hébergement en Suisse</span>
+                  </div>
+                  <div className="flex items-center justify-center">
+                    <Check className="h-6 w-6 text-green-600" />
+                  </div>
+                  <div className="flex items-center justify-center">
+                    <Check className="h-6 w-6 text-green-600" />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-3 gap-4 p-6 hover:bg-gray-50 transition-colors">
+                  <div className="flex items-center">
+                    <span className="font-medium text-gray-900">Multi-canaux de vente</span>
+                  </div>
+                  <div className="flex items-center justify-center">
+                    <Check className="h-6 w-6 text-green-600" />
+                  </div>
+                  <div className="flex items-center justify-center">
+                    <span className="text-sm text-gray-500">Limité</span>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-3 gap-4 p-6 hover:bg-gray-50 transition-colors">
+                  <div className="flex items-center">
+                    <span className="font-medium text-gray-900">Tableau de bord analytique</span>
+                  </div>
+                  <div className="flex items-center justify-center">
+                    <Check className="h-6 w-6 text-green-600" />
+                  </div>
+                  <div className="flex items-center justify-center">
+                    <Check className="h-6 w-6 text-green-600" />
+                  </div>
+                </div>
+              </div>
+
+              {/* Footer CTA */}
+              <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-8 text-center border-t border-gray-200">
+                <p className="text-gray-700 mb-4 font-medium">
+                  Économisez jusqu'à <span className="text-blue-600 font-bold text-xl">420 CHF/an</span> avec OperisCloud
+                </p>
+                <Link
+                  href="/sign-up"
+                  className="inline-flex items-center justify-center bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-8 py-4 rounded-xl hover:shadow-2xl hover:scale-105 font-bold text-lg transition-all"
+                >
+                  Essayer gratuitement
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Link>
+                <p className="text-sm text-gray-500 mt-3">
+                  Sans carte bancaire • Migration depuis Bexio gratuite
+                </p>
+              </div>
+            </div>
+
+            {/* Note */}
+            <p className="text-center text-sm text-gray-500 mt-8">
+              Comparaison basée sur les tarifs et fonctionnalités publics de Bexio en décembre 2024.
+              <br />
+              Nous respectons Bexio comme acteur du marché suisse.
+            </p>
+          </div>
+        </div>
+      </section>
+
       {/* Pricing Section */}
       <section id="pricing" className="py-24 bg-white">
         <div className="container mx-auto px-4">
@@ -458,7 +843,7 @@ export default function HomePage() {
                 </li>
                 <li className="flex items-start">
                   <Check className="h-5 w-5 text-green-500 mr-3 flex-shrink-0 mt-0.5" />
-                  <span className="text-gray-700">Jusqu'à 50 clients</span>
+                  <span className="text-gray-700">Jusqu'à 25 clients</span>
                 </li>
                 <li className="flex items-start">
                   <Check className="h-5 w-5 text-green-500 mr-3 flex-shrink-0 mt-0.5" />
@@ -598,9 +983,16 @@ export default function HomePage() {
       </section>
 
       {/* Testimonials Section */}
-      <section id="testimonials" className="py-24 bg-gradient-to-b from-gray-50 to-white">
-        <div className="container mx-auto px-4">
+      <section id="testimonials" className="py-24 bg-gradient-to-b from-gray-50 to-white relative overflow-hidden">
+        <div className="absolute inset-0 bg-grid-slate-100 opacity-50"></div>
+        <div className="container mx-auto px-4 relative z-10">
           <div className="text-center max-w-3xl mx-auto mb-16">
+            <div className="inline-flex items-center gap-2 bg-yellow-100 border border-yellow-200 rounded-full px-4 py-2 mb-6">
+              <Star className="h-4 w-4 text-yellow-600 fill-yellow-600" />
+              <span className="text-sm font-semibold text-yellow-900">
+                Note moyenne 4.9/5 sur 200+ avis
+              </span>
+            </div>
             <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
               Ce que disent nos clients
             </h2>
@@ -610,62 +1002,119 @@ export default function HomePage() {
           </div>
 
           <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            <div className="bg-white p-8 rounded-2xl shadow-lg">
-              <div className="flex items-center mb-4">
+            {/* Testimonial 1 */}
+            <div className="group bg-white p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all border-2 border-transparent hover:border-blue-200 relative">
+              <div className="absolute -top-4 -right-4 w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center shadow-lg">
+                <span className="text-white text-2xl">"</span>
+              </div>
+              <div className="flex items-center gap-1 mb-4">
                 {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="h-5 w-5 text-yellow-400 fill-current" />
+                  <Star key={i} className="h-5 w-5 text-yellow-400 fill-yellow-400" />
                 ))}
               </div>
-              <p className="text-gray-700 mb-6 leading-relaxed">
+              <p className="text-gray-700 mb-6 leading-relaxed font-medium">
                 "OperisCloud a révolutionné notre façon de gérer la boutique. En 2 mois, on a gagné 10h par semaine sur la facturation !"
               </p>
               <div className="flex items-center">
-                <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mr-4">
-                  <span className="text-blue-600 font-bold">ML</span>
+                <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center mr-4 shadow-md">
+                  <span className="text-white font-bold text-lg">ML</span>
                 </div>
                 <div>
-                  <p className="font-semibold text-gray-900">Marie Leclerc</p>
-                  <p className="text-sm text-gray-600">Boutique de mode, Lausanne</p>
+                  <p className="font-bold text-gray-900">Marie Leclerc</p>
+                  <p className="text-sm text-gray-600">Boutique de mode</p>
+                  <p className="text-xs text-gray-500 flex items-center gap-1 mt-0.5">
+                    <span className="w-1 h-1 bg-gray-400 rounded-full"></span>
+                    Lausanne
+                  </p>
                 </div>
               </div>
             </div>
 
-            <div className="bg-white p-8 rounded-2xl shadow-lg">
-              <div className="flex items-center mb-4">
+            {/* Testimonial 2 */}
+            <div className="group bg-white p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all border-2 border-transparent hover:border-purple-200 relative">
+              <div className="absolute -top-4 -right-4 w-12 h-12 bg-purple-600 rounded-full flex items-center justify-center shadow-lg">
+                <span className="text-white text-2xl">"</span>
+              </div>
+              <div className="flex items-center gap-1 mb-4">
                 {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="h-5 w-5 text-yellow-400 fill-current" />
+                  <Star key={i} className="h-5 w-5 text-yellow-400 fill-yellow-400" />
                 ))}
               </div>
-              <p className="text-gray-700 mb-6 leading-relaxed">
+              <p className="text-gray-700 mb-6 leading-relaxed font-medium">
                 "Interface super intuitive ! Mon équipe a adopté l'outil en quelques jours sans formation. Les rapports sont précis."
               </p>
               <div className="flex items-center">
-                <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mr-4">
-                  <span className="text-purple-600 font-bold">JD</span>
+                <div className="w-14 h-14 bg-gradient-to-br from-purple-500 to-purple-600 rounded-full flex items-center justify-center mr-4 shadow-md">
+                  <span className="text-white font-bold text-lg">JD</span>
                 </div>
                 <div>
-                  <p className="font-semibold text-gray-900">Jean Dupont</p>
-                  <p className="text-sm text-gray-600">Garage automobile, Genève</p>
+                  <p className="font-bold text-gray-900">Jean Dupont</p>
+                  <p className="text-sm text-gray-600">Garage automobile</p>
+                  <p className="text-xs text-gray-500 flex items-center gap-1 mt-0.5">
+                    <span className="w-1 h-1 bg-gray-400 rounded-full"></span>
+                    Genève
+                  </p>
                 </div>
               </div>
             </div>
 
-            <div className="bg-white p-8 rounded-2xl shadow-lg">
-              <div className="flex items-center mb-4">
+            {/* Testimonial 3 */}
+            <div className="group bg-white p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all border-2 border-transparent hover:border-green-200 relative">
+              <div className="absolute -top-4 -right-4 w-12 h-12 bg-green-600 rounded-full flex items-center justify-center shadow-lg">
+                <span className="text-white text-2xl">"</span>
+              </div>
+              <div className="flex items-center gap-1 mb-4">
                 {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="h-5 w-5 text-yellow-400 fill-current" />
+                  <Star key={i} className="h-5 w-5 text-yellow-400 fill-yellow-400" />
                 ))}
               </div>
-              <p className="text-gray-700 mb-6 leading-relaxed">
+              <p className="text-gray-700 mb-6 leading-relaxed font-medium">
                 "Le meilleur rapport qualité-prix pour un ERP complet. Support réactif et mises à jour régulières. Je recommande !"
               </p>
               <div className="flex items-center">
-                <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mr-4">
-                  <span className="text-green-600 font-bold">SM</span>
+                <div className="w-14 h-14 bg-gradient-to-br from-green-500 to-green-600 rounded-full flex items-center justify-center mr-4 shadow-md">
+                  <span className="text-white font-bold text-lg">SM</span>
                 </div>
                 <div>
-                  <p className="font-semibold text-gray-900">Sophie Martin</p>
-                  <p className="text-sm text-gray-600">Salon de beauté, Fribourg</p>
+                  <p className="font-bold text-gray-900">Sophie Martin</p>
+                  <p className="text-sm text-gray-600">Salon de beauté</p>
+                  <p className="text-xs text-gray-500 flex items-center gap-1 mt-0.5">
+                    <span className="w-1 h-1 bg-gray-400 rounded-full"></span>
+                    Fribourg
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Trust indicators */}
+          <div className="mt-16 text-center">
+            <div className="inline-flex flex-wrap items-center justify-center gap-6 md:gap-12 bg-white px-8 py-6 rounded-2xl shadow-md border border-gray-100">
+              <div className="flex items-center gap-2">
+                <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                  <Check className="h-6 w-6 text-green-600" />
+                </div>
+                <div className="text-left">
+                  <div className="font-bold text-gray-900">200+</div>
+                  <div className="text-xs text-gray-600">Avis vérifiés</div>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                  <Users className="h-6 w-6 text-blue-600" />
+                </div>
+                <div className="text-left">
+                  <div className="font-bold text-gray-900">500+</div>
+                  <div className="text-xs text-gray-600">Clients actifs</div>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
+                  <TrendingUp className="h-6 w-6 text-purple-600" />
+                </div>
+                <div className="text-left">
+                  <div className="font-bold text-gray-900">98%</div>
+                  <div className="text-xs text-gray-600">Satisfaction</div>
                 </div>
               </div>
             </div>

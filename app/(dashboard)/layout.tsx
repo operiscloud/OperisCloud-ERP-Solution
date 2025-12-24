@@ -1,8 +1,7 @@
 import { redirect } from 'next/navigation';
 import { auth } from '@clerk/nextjs/server';
 import { prisma } from '@/lib/prisma';
-import { DashboardNav } from '@/components/layout/DashboardNav';
-import { DashboardHeader } from '@/components/layout/DashboardHeader';
+import { DashboardLayoutClient } from '@/components/layout/DashboardLayoutClient';
 
 export default async function DashboardLayout({
   children,
@@ -37,16 +36,8 @@ export default async function DashboardLayout({
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <DashboardNav
-        tenant={user.tenant}
-        enabledModules={user.tenant.enabledModules}
-        plan={user.tenant.plan}
-      />
-      <div className="lg:pl-64">
-        <DashboardHeader user={user} tenant={user.tenant} />
-        <main className="p-6">{children}</main>
-      </div>
-    </div>
+    <DashboardLayoutClient user={user} tenant={user.tenant}>
+      {children}
+    </DashboardLayoutClient>
   );
 }

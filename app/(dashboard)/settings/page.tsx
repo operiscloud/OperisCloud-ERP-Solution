@@ -5,7 +5,9 @@ import { Settings as SettingsIcon, Palette, ShoppingCart, Building2, Users, Uplo
 import Link from 'next/link';
 import { getPlan } from '@/lib/plans';
 import PDFTemplateLink from '@/components/settings/PDFTemplateLink';
+import ReminderLink from '@/components/settings/ReminderLink';
 import LogoUpload from '@/components/settings/LogoUpload';
+import SubscriptionManagement from '@/components/settings/SubscriptionManagement';
 
 export default async function SettingsPage() {
   const { userId } = await auth();
@@ -173,6 +175,14 @@ export default async function SettingsPage() {
         </div>
       </div>
 
+      {/* Subscription Management */}
+      <SubscriptionManagement
+        currentPlan={user.tenant.plan}
+        stripeCustomerId={user.tenant.stripeCustomerId}
+        stripeSubscriptionId={user.tenant.stripeSubscriptionId}
+        stripeCurrentPeriodEnd={user.tenant.stripeCurrentPeriodEnd}
+      />
+
       {/* Plan Usage */}
       <div className="bg-white rounded-lg shadow p-6 space-y-4">
         <div className="flex items-center justify-between">
@@ -272,7 +282,7 @@ export default async function SettingsPage() {
       <div className="bg-white rounded-lg shadow p-6 space-y-4">
         <h2 className="text-lg font-semibold text-gray-900">Configuration avancée</h2>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <Link
             href="/settings/company"
             className="flex items-center gap-3 px-4 py-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
@@ -321,6 +331,11 @@ export default async function SettingsPage() {
               <div className="text-sm text-gray-500">TVA, livraison, moyens de paiement</div>
             </div>
           </Link>
+
+          <ReminderLink
+            hasAccess={user.tenant.plan === 'PRO' || user.tenant.plan === 'BUSINESS'}
+            currentPlan={user.tenant.plan}
+          />
 
           {(user.role === 'OWNER' || user.role === 'ADMIN') && (
             <Link

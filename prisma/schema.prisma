@@ -20,9 +20,11 @@ model Tenant {
   subdomain String @unique
 
   // Subscription & Plan
-  plan                 Plan    @default(FREE)
-  stripeCustomerId     String?
-  stripeSubscriptionId String?
+  plan                   Plan      @default(FREE)
+  stripeCustomerId       String?   @unique
+  stripeSubscriptionId   String?   @unique
+  stripePriceId          String?   // Current active price ID
+  stripeCurrentPeriodEnd DateTime? // When subscription renews/ends
 
   // Settings
   logo         String?
@@ -362,6 +364,10 @@ model Order {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  // Invoice reminders
+  dueDate   DateTime?
+  reminders InvoiceReminder[]
+
   // Relations
   items OrderItem[]
 
@@ -529,5 +535,38 @@ model Segment {
   customers Customer[]
 
   @@index([tenantId])
+}
+
+// ==========================================
+// INVOICE REMINDERS MODULE
+// ==========================================
+
+model InvoiceReminder {
+  id           String   @id @default(cuid())
+  orderId      String
+  order        Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  tenantId     String
+  sentAt       DateTime @default(now())
+  sentTo       String[] // Email addresses
+  reminderType String   // "first", "second", "final"
+  createdAt    DateTime @default(now())
+
+  @@index([tenantId])
+  @@index([orderId])
+}
+
+model ReminderSettings {
+  id                 String   @id @default(cuid())
+  tenantId           String   @unique
+  enabled            Boolean  @default(true)
+  firstReminderDays  Int      @default(7) // Days after due date
+  secondReminderDays Int      @default(14)
+  finalReminderDays  Int      @default(30)
+  sendToAdmin        Boolean  @default(true)
+  sendToCustomer     Boolean  @default(true)
+  adminEmail         String?
+  emailTemplate      String?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
 }
 

@@ -100,6 +100,7 @@ export async function PATCH(
       taxRate,
       discount,
       shippingCost,
+      dueDate,
       notes,
       items,
     } = body;
@@ -254,6 +255,7 @@ export async function PATCH(
           taxAmount,
           discount,
           shippingCost,
+          dueDate: dueDate ? new Date(dueDate) : null,
           notes: notes || null,
           subtotal,
           total,

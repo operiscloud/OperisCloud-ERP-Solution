@@ -27,6 +27,8 @@ export const PLANS: Record<PlanType, Plan> = {
       hasImportExcel: false,
       hasMultiChannel: false,
       hasLowStockAlerts: false,
+      hasInvoiceReminders: false,
+      hasBarcodeScanner: false,
 
       // No advanced features
       hasAdvancedSegmentation: false,
@@ -70,6 +72,8 @@ export const PLANS: Record<PlanType, Plan> = {
       hasImportExcel: true,
       hasMultiChannel: true,
       hasLowStockAlerts: true,
+      hasInvoiceReminders: true,
+      hasBarcodeScanner: true,
 
       // Some advanced features
       hasAdvancedSegmentation: false,
@@ -93,8 +97,8 @@ export const PLANS: Record<PlanType, Plan> = {
     name: 'Business',
     description: 'Pour les entreprises établies avec équipes',
     price: {
-      monthly: 79,
-      yearly: 790, // ~2 months free
+      monthly: 69,
+      yearly: 690, // ~2 months free
     },
     limits: {
       maxProducts: 0, // unlimited
@@ -114,6 +118,8 @@ export const PLANS: Record<PlanType, Plan> = {
       hasImportExcel: true,
       hasMultiChannel: true,
       hasLowStockAlerts: true,
+      hasInvoiceReminders: true,
+      hasBarcodeScanner: true,
 
       // All advanced features
       hasAdvancedSegmentation: true,
@@ -157,6 +163,8 @@ export const PLANS: Record<PlanType, Plan> = {
       hasImportExcel: true,
       hasMultiChannel: true,
       hasLowStockAlerts: true,
+      hasInvoiceReminders: true,
+      hasBarcodeScanner: true,
 
       // All advanced features
       hasAdvancedSegmentation: true,

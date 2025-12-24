@@ -174,7 +174,7 @@ export default function TestPlansPage() {
         </div>
 
         <div className="bg-indigo-50 rounded-lg p-4 border-2 border-indigo-300">
-          <div className="font-bold text-indigo-900 mb-2">BUSINESS (79 CHF/mois)</div>
+          <div className="font-bold text-indigo-900 mb-2">BUSINESS (69 CHF/mois)</div>
           <ul className="text-xs text-indigo-700 space-y-1">
             <li>✓ Tout illimité</li>
             <li>✓ 10 utilisateurs</li>

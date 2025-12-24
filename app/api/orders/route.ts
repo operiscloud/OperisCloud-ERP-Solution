@@ -214,6 +214,7 @@ export async function POST(request: NextRequest) {
           paymentStatus: validatedData.paymentStatus,
           paymentMethod: validatedData.paymentMethod,
           createdAt: validatedData.orderDate ? new Date(validatedData.orderDate) : undefined,
+          dueDate: validatedData.dueDate ? new Date(validatedData.dueDate) : undefined,
           items: {
             create: validatedData.items.map((item) => ({
               productId: item.productId,

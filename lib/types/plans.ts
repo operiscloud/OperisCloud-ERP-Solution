@@ -20,6 +20,8 @@ export interface PlanFeatures {
   hasImportExcel: boolean;
   hasMultiChannel: boolean;
   hasLowStockAlerts: boolean;
+  hasInvoiceReminders: boolean; // Rappels de paiement automatiques
+  hasBarcodeScanner: boolean; // Scanner de code-barres mobile
 
   // Advanced features (BUSINESS+)
   hasAdvancedSegmentation: boolean;

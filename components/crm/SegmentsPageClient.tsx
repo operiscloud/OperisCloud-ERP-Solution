@@ -170,7 +170,7 @@ export default function SegmentsPageClient({ hasAccess }: SegmentsPageClientProp
             href="/pricing"
             className="inline-block bg-indigo-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-indigo-700 transition-colors"
           >
-            Débloquer avec Business - 79 CHF/mois
+            Débloquer avec Business - 69 CHF/mois
           </Link>
 
           <p className="text-sm text-gray-600 mt-4">
@@ -191,18 +191,18 @@ export default function SegmentsPageClient({ hasAccess }: SegmentsPageClientProp
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Segments de clients</h1>
           <p className="text-gray-600">
             Organisez vos clients en segments pour mieux cibler vos actions marketing
           </p>
         </div>
-        <div className="flex gap-3">
+        <div className="flex gap-3 flex-wrap">
           <button
             onClick={recalculateSegments}
             disabled={recalculating}
-            className="inline-flex items-center bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+            className="inline-flex items-center justify-center bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
             title="Recalculer tous les segments"
           >
             <RefreshCw className={`h-5 w-5 mr-2 ${recalculating ? 'animate-spin' : ''}`} />
@@ -210,7 +210,7 @@ export default function SegmentsPageClient({ hasAccess }: SegmentsPageClientProp
           </button>
           <Link
             href="/crm/segments/new"
-            className="inline-flex items-center bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 font-medium"
+            className="inline-flex items-center justify-center bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 font-medium"
           >
             <Plus className="h-5 w-5 mr-2" />
             Nouveau segment

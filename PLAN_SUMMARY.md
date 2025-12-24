@@ -9,7 +9,7 @@
 - **Plans définis**:
   - **FREE**: 50 produits, 30 commandes/mois, 1 utilisateur, 30 jours d'historique
   - **PRO**: 500 produits, 200 commandes/mois, 3 utilisateurs, 1 an d'historique - **29 CHF/mois**
-  - **BUSINESS**: Tout illimité, 10 utilisateurs - **79 CHF/mois**
+  - **BUSINESS**: Tout illimité, 10 utilisateurs - **69 CHF/mois**
   - **ENTERPRISE**: Sur mesure
 
 #### Types TypeScript

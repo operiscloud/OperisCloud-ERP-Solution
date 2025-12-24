@@ -116,6 +116,7 @@ export const orderSchema = z.object({
   paymentStatus: z.enum(['PENDING', 'PARTIAL', 'PAID', 'REFUNDED']).default('PENDING'),
   giftCardCode: z.string().optional().nullable(),
   orderDate: z.string().optional().nullable(),
+  dueDate: z.string().optional().nullable(),
 });
 
 export const updateOrderStatusSchema = z.object({

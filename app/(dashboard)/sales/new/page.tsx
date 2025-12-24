@@ -59,7 +59,9 @@ export default function NewOrderPage() {
   const [customerId, setCustomerId] = useState('');
   const [orderNumber, setOrderNumber] = useState('');
   const [orderDate, setOrderDate] = useState(new Date().toISOString().split('T')[0]);
+  const [dueDate, setDueDate] = useState('');
   const [items, setItems] = useState<OrderItem[]>([]);
+  const [type, setType] = useState<'ORDER' | 'QUOTE' | 'INVOICE'>('ORDER');
   const [status, setStatus] = useState<'DRAFT' | 'CONFIRMED' | 'PROCESSING' | 'SHIPPED' | 'DELIVERED' | 'CANCELLED' | 'REFUNDED'>('DRAFT');
   const [channel, setChannel] = useState('');
   const [paymentMethod, setPaymentMethod] = useState('');
@@ -293,6 +295,8 @@ export default function NewOrderPage() {
           customerId: customerId || null,
           orderNumber: orderNumber || undefined,
           orderDate: orderDate ? new Date(orderDate).toISOString() : undefined,
+          dueDate: dueDate ? new Date(dueDate).toISOString() : undefined,
+          type,
           status,
           channel: channel || undefined,
           paymentMethod,
@@ -728,6 +732,34 @@ export default function NewOrderPage() {
                 onChange={(e) => setOrderDate(e.target.value)}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Date d'échéance (optionnel)
+              </label>
+              <input
+                type="date"
+                value={dueDate}
+                onChange={(e) => setDueDate(e.target.value)}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="Pour les factures uniquement"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Type
+              </label>
+              <select
+                value={type}
+                onChange={(e) => setType(e.target.value as 'ORDER' | 'QUOTE' | 'INVOICE')}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              >
+                <option value="ORDER">Commande</option>
+                <option value="QUOTE">Devis</option>
+                <option value="INVOICE">Facture</option>
+              </select>
             </div>
 
             <div>
